@@ -11,18 +11,20 @@ import SqsClient from '@gasbuddy/configured-sqs-client';
 const argv = minimist(process.argv.slice(2));
 
 assert(argv.region, 'Missing required "region" argument');
-assert(argv.queue, 'Missing required "type" argument');
+assert(argv.queue, 'Missing required "queue" argument');
 assert(argv.template, 'Missing required "template" argument');
 
 runWithService(async (service, req) => {
-  const ctx = { service, logger: req.gb.logger };
-  const client = new SqsClient(ctx, {
-    username: argv.region || process.env.SQS_REGION || 'us-east-1',
+  req.service = service;
+  req.logger = req.gb.logger;
+  const client = new SqsClient(req, {
+    region: argv.region || process.env.SQS_REGION || 'us-east-1',
     endpoint: argv.endpoint || undefined,
+    accountId: argv.accountId || undefined,
     queues: [argv.queue],
   });
 
-  await client.start(ctx);
+  await client.start(req);
 
   const json = JSON.parse(argv.template[0] === '{' ? argv.template : fs.readFileSync(path.resolve(argv.template), 'utf8'));
   const resolver = shortstop.create();
@@ -48,11 +50,11 @@ runWithService(async (service, req) => {
 
   try {
     req.gb.logger.info('Publishing message', message);
-    await client.publish(ctx, argv.queue, message, { correlationid: req.headers.correlationid });
+    await client.publish(req, argv.queue, message, { correlationid: req.headers.correlationid });
   } catch (error) {
     req.gb.logger.error('Failed to publish', req.gb.wrapError(error));
     process.exitCode = -1;
   } finally {
-    await client.stop(ctx);
+    await client.stop(req);
   }
 });

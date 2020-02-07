@@ -33,7 +33,7 @@
     "tap": "^14.10.6"
   },
   "dependencies": {
-    "@gasbuddy/configured-sqs-client": "^1.3.6",
+    "@gasbuddy/configured-sqs-client": "^1.4.2",
     "@gasbuddy/service": "^10.5.0",
     "lodash": "^4.17.15",
     "minimist": "^1.2.0",
