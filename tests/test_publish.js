@@ -7,6 +7,7 @@ const port = process.env.SQS_PORT || 9324;
 tap.test('test_publish', (t) => {
   const proc = exec([
     'node -r @babel/register ./src/publish-sqs-message.js',
+    '--key=key --secret=secret --token=token',
     `--region=us-east-1 --queue=basic_queue --endpoint=http://${host}:${port}/queue`,
     '--template=\'{"start": "relative-date:-4 days YYYY-MM-DD"}\'',
   ].join(' '), (err, stdout, stderr) => {

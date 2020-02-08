@@ -17,12 +17,20 @@ assert(argv.template, 'Missing required "template" argument');
 runWithService(async (service, req) => {
   req.service = service;
   req.logger = req.gb.logger;
-  const client = new SqsClient(req, {
+  const config = {
     region: argv.region || process.env.SQS_REGION || 'us-east-1',
     endpoint: argv.endpoint || undefined,
     accountId: argv.accountId || undefined,
     queues: [argv.queue],
-  });
+  };
+  if (argv.key) {
+    Object.assign(config, {
+      accessKeyId: argv.key,
+      secretAccessKey: argv.secret,
+      sessionToken: argv.token,
+    });
+  }
+  const client = new SqsClient(req, config);
 
   await client.start(req);
 
