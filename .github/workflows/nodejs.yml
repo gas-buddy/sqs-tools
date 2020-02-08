@@ -29,7 +29,7 @@ jobs:
         npm install
         npm run lint
         npm run build
-        npm test
+        NO_PRETTY_LOGS=true npm test
       env:
         NPM_TOKEN: ${{secrets.npm_token}}
         CI: true
