@@ -24,11 +24,12 @@ runWithService(async (service, req) => {
     queues: [argv.queue],
   };
   if (argv.key) {
-    Object.assign(config, {
+    config.endpoint = {
+      endpoint: config.endpoint,
       accessKeyId: argv.key,
       secretAccessKey: argv.secret,
       sessionToken: argv.token,
-    });
+    };
   }
   const client = new SqsClient(req, config);
 
